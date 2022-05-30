@@ -6,6 +6,8 @@ output: html_notebook
 
 This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook for processing the respiration rate data from the FireSting sensor. When you execute code within the notebook, the results appear beneath the code. 
 
+You can also access this template on [GitHub](https://github.com/zqzhou7/RespirationRateAnalysis.git).
+
 ## 1. loading data
 ```{r}
 d = read.table("d5_control.txt", fill = TRUE)
