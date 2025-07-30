@@ -54,25 +54,57 @@ names(d) = c('Date', 'Time', 'Seconds', 'Channel1', 'Channel2', 'Channel3', 'Cha
 ```
 
 ### 3. Calculate Respiration Rates
+This section processes the cleaned data to estimate oxygen consumption (respiration) across a user-defined measurement window.
 
-```csv
-Date,Duration(s),Channel1,Channel2,Channel3,Channel4,Mean temperature
-2025-07-01,3600,0.42,0.38,0.47,0.41,25.3
+Step-by-step explanation:
+
+#### a. Convert relevant columns to numeric format:
+```r
+d$Seconds     = as.numeric(d$Seconds)
+d$Channel1    = as.numeric(d$Channel1)
+d$Channel2    = as.numeric(d$Channel2)
+d$Channel3    = as.numeric(d$Channel3)
+d$Channel4    = as.numeric(d$Channel4)
+d$Temperature = as.numeric(d$Temperature)
 ```
 
+#### b. Define the measurement window:
+
+In this example, respiration is calculated between 15 and 75 minutes of incubation (i.e., 900 to 4500 seconds).
+```r
+ctrl_begin = subset(d, Seconds >= 900 & Seconds < 901)    # Start time
+ctrl_end   = subset(d, Seconds >= 4500 & Seconds < 4501)  # End time
+```
+
+#### c. Calculate oxygen depletion:
+
+We compute the difference in O₂ levels between the start and end points for each channel.
+```r
+ctrl_orig = data.frame(rbind(ctrl_begin, ctrl_end, NA), row.names = c("begin", "end", "dm"))
+ctrl_dift = ctrl_orig["begin", 4:7] - ctrl_orig["end", 4:7]
+ctrl_orig[3, 4:7] = ctrl_dift
+ctrl_orig[3, 1]   = ctrl_orig[1, 1]  # Date
+ctrl_orig[3, 3]   = ctrl_orig["end", 3] - ctrl_orig["begin", 3]  # Duration (in seconds)
+ctrl_orig[3, 8]   = mean(d$Temperature[1:900])  # Mean starting temperature
+```
+
+#### d. Extract and save the output:
+
+Format the results into a clean summary table and export to a CSV file.
+```r
+respirationRate = ctrl_orig[3, -2]
+names(respirationRate) = c("Date", "Duration(s)", "Channel1", "Channel2", "Channel3", "Channel4", "Mean temperature")
+write.csv(respirationRate, "respirationRate.csv", row.names = FALSE)
+```
+
+### Example Output (respirationRate.csv)
+- Date: Timestamp of the experiment
+- Duration(s): Total incubation time in seconds
+- Channel1–4: Oxygen consumption (change in concentration over time)
+- Mean temperature: Average temperature during the first 15 minutes
+
+
 ### Notes
-	•	This script assumes the FireSting output format is consistent across files.
-	•	You may need to adjust the subset() timing depending on your experimental design.
-	•	Temperature is averaged across the full dataset, assuming ambient stability during incubation.
-
-
-
-
-
-
-
-
-
-
-
-
+- This script assumes the FireSting output format is consistent across files.
+- You may need to adjust the subset() timing depending on your experimental design.
+- Temperature is averaged across the full dataset, assuming ambient stability during incubation.
