@@ -104,7 +104,7 @@ write.csv(respirationRate, "respirationRate.csv", row.names = FALSE)
 - Mean temperature: Average temperature during the first 15 minutes
 
 
-### 5. Notes
+## Notes
 - This script assumes the FireSting output format is consistent across files.
 - You may need to adjust the subset() timing depending on your experimental design.
 - Temperature is averaged across the full dataset, assuming ambient stability during incubation.
