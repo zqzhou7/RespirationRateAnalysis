@@ -97,14 +97,14 @@ names(respirationRate) = c("Date", "Duration(s)", "Channel1", "Channel2", "Chann
 write.csv(respirationRate, "respirationRate.csv", row.names = FALSE)
 ```
 
-### Example Output (respirationRate.csv)
+### 4. Example Output (respirationRate.csv)
 - Date: Timestamp of the experiment
 - Duration(s): Total incubation time in seconds
 - Channel1–4: Oxygen consumption (change in concentration over time)
 - Mean temperature: Average temperature during the first 15 minutes
 
 
-### Notes
+### 5. Notes
 - This script assumes the FireSting output format is consistent across files.
 - You may need to adjust the subset() timing depending on your experimental design.
 - Temperature is averaged across the full dataset, assuming ambient stability during incubation.
